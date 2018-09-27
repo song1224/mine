@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+
+	<settings>
+		<!-- <setting name="useColumnLabel" value="true"/> -->
+
+		<!-- 将带有下划线的列名映射成驼峰命名： count_of_book -> countOfBook -->
+		<setting name="mapUnderscoreToCamelCase" value="false" />
+		<setting name="lazyLoadingEnabled" value="true" />
+		<setting name="aggressiveLazyLoading" value="false" />
+	</settings>
+
+	<!-- 给java类型取别名，在映射文件中就可以使用别名 -->
+	<typeAliases>
+		<!-- <typeAlias type="org.lq.pojo.City" alias="city"/> -->
+		<package name="org.lq.pojo" /> <!-- //City, city -->
+
+	</typeAliases>
+
+
+<!-- 	<plugins>
+		com.github.pagehelper为PageHelper类所在包名
+		<plugin interceptor="com.github.pagehelper.PageInterceptor">
+			使用下面的方式配置参数，后面会有所有的参数介绍
+			<property name="param1" value="value1" />
+		</plugin>
+	</plugins>
+ -->
+
+
+	<!-- default指定使用哪个环境 -->
+	<environments default="oracle">
+		<environment id="mysql">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${mysql.driverClass}" />
+				<property name="url" value="${mysql.url}" />
+				<property name="username" value="${mysql.username}" />
+				<!-- <property name="password" value="${password:root}"/> -->
+				<property name="password" value="${mysql.password?:root}" />
+			</dataSource>
+		</environment>
+
+		<environment id="oracle">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${oracle.driverClass}" />
+				<property name="url" value="${oracle.url}" />
+				<property name="username" value="${oracle.username}" />
+				<!-- <property name="password" value="${password:root}"/> -->
+				<property name="password" value="${oracle.password?:root}" />
+			</dataSource>
+		</environment>
+
+	</environments>
+	<mappers>
+
+		<!-- <mapper class="org.lq.mapper.CityMapper"/> -->
+		<!-- <mapper resource="org/lq/mapper/CityMapper.xml"/> -->
+		<package name="org.lq.mapper" />
+	</mappers>
+</configuration>
