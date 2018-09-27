@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	">
+	<!-- aop: step 1 -->
+	<!-- 开启aspectj的注解功能,spring鉴借了aspectJ的这一套注解 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<context:component-scan
+		base-package="org.lq.aspect, org.lq.dao.impl"></context:component-scan>
+
+
+
+	<!-- 定义一个数据源，你们需要换成dbcp, 和 druid -->
+	<!-- <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" 
+		destroy-method="close"> <property name="driverClass" value="${jdbc.driverClassName}" 
+		/> <property name="jdbcUrl" value="${jdbc.url}" /> <property name="user" 
+		value="${jdbc.username}" /> <property name="password" value="${jdbc.password}" 
+		/> </bean> -->
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
+
+	<!-- <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"> 
+		<property name="password" value="${jdbc.password}"></property> <property 
+		name="username" value="${jdbc.username}"></property> <property name="driverClassName" 
+		value="${jdbc.driverClassName}"></property> <property name="url" value="${jdbc.url}"></property> 
+		</bean> -->
+
+	<bean id="dataSource"
+		class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="password" value="${jdbc.password}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="driverClassName"
+			value="${jdbc.driverClassName}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+	</bean>
+
+
+
+	<!-- 从类路径classpath下读一个叫jdbc.properties的文件，加载进内存构成一个Properties对象 -->
+	<context:property-placeholder
+		location="jdbc.properties" />
+
+	<!-- sqlSessionFactory,用于创建mybatis的sqlSession对象的 -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation"
+			value="classpath:mybatis/mybatis-config.xml" />
+		<property name="plugins">
+			<array>
+				<bean class="com.github.pagehelper.PageInterceptor">
+					<property name="properties">
+						<!--使用下面的方式配置参数，一行配置一个 -->
+						<value>
+							params=value1
+						</value>
+					</property>
+				</bean>
+			</array>
+		</property>
+	</bean>
+
+	<!-- <bean id="cityMapper" class="org.mybatis.spring.mapper.MapperFactoryBean"> 
+		<property name="mapperInterface" value="org.lq.mapper.CityMapper" /> <property 
+		name="sqlSessionFactory" ref="sqlSessionFactory" /> </bean> <bean id="countryMapper" 
+		class="org.mybatis.spring.mapper.MapperFactoryBean"> <property name="mapperInterface" 
+		value="org.lq.mapper.CountryMapper" /> <property name="sqlSessionFactory" 
+		ref="sqlSessionFactory" /> </bean> -->
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="org.lq.mapper" />
+	</bean>
+
+
+	<bean id="cityService" class="org.lq.service.impl.CityServiceImpl"
+		autowire="byType">
+	</bean>
+
+</beans>
